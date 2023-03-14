@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8"/>
+        <title Données Connectées></title>
+
+        <script>
+
+            function isURL(str) {
+                const pattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+                return pattern.test(str);
+            }
+            
+
+
+            function envoi(){
+                //alert("URI est : " +document.getElementById('IdURI').value);
+                if (isURL(document.getElementById('IdURI').value)){
+                    var body = {"URI":document.getElementById('IdURI').value,
+                                "Commentaire":document.getElementById('IdCommentaire').value};    
+                    console.log(body);
+                    var route = "/Annotation";
+                    
+                    fetch(route, {  method: "POST",
+                                    body: JSON.stringify(body)
+                                    ,headers:{'Content-Type': 'application/json'}
+                    
+                                }).then(
+
+                    function(res){
+                                    //echo "Annotation crée";
+                                    console.log(res);
+                                    document.getElementById('IdURI').value="";
+							        document.getElementById('IdCommentaire').value="";
+                                    document.getElementById('IdRes').innerHTML="Annotation ajoutée!";
+                                    //window.location.reload();
+                                    });
+
+                }   
+                else {
+                        document.getElementById('IdURI').value="";
+                        document.getElementById('IdRes').innerHTML="Veuillez rentrer une URI valide!";
+                    }
+        };
+
+        </script>
+    </head>
+    <body>
+        <h1>Créer une nouvelle annotation</h1>
+        <form id="myForm" autocomplete="off" onsubmit="return false;">
+            <label for="title">URI :</label>
+            <input type="text" id="IdURI" name="title"><br><br>
+            
+            <label for="content">Commentaire :</label>
+            <textarea id="IdCommentaire" name="content"></textarea><br><br>
+            
+            <!-- <label for="format">Format :</label>
+            <select id="format" name="format">
+                <option value="text">Texte brut</option>
+                <option value="html">HTML</option>
+                <option value="markdown">Markdown</option>
+                <option value="json">JSON</option>
+            </select><br><br> -->
+            
+            <input type="submit" value="Envoyer" onclick="envoi()">
+            <!-- <button onclick="envoi()" type="button">Envoyer</button> -->
+
+            
+        </form>
+        
+        <p id="IdRes"></p>
+
+
+        <h1>Acceder à une annotation</h1>
+		<form action="/annotations" method="get">
+            <label for="id">ID de l'annotation :</label>
+            <input type="number" id="id" name="id" required>
+            <br>
+            <label for="format">Format de données :</label>
+            <select id="format" name="format">
+              <option value="html">HTML</option>
+              <option value="json">JSON</option>
+            </select>
+            <br>
+            <button type="submit">Récupérer</button>
+          </form>
+
+          <h1>Acceder à toutes les annotations</h1>
+          <form action="/allAnnotations" method="get">
+              <label for="format">Format de données :</label>
+              <select id="format" name="format">
+                <option value="html">HTML</option>
+                <option value="json">JSON</option>
+              </select>
+              <br>
+              <button type="submit">Récupérer</button>
+            </form>
+
+            <h1>Acceder à toutes les annotations d'une URI particulière</h1>
+            <form action="/uriannotations" method="get">
+                <label for="url">URL :</label>
+                <input type="text" id="url" name="url" required>
+                <br>
+                <label for="format">Format :</label>
+                <select id="format" name="format">
+                  <option value="html">HTML</option>
+                  <option value="json">JSON</option>
+                </select>
+                <br>
+                <button type="submit">Récupérer les annotations</button>
+              </form>
+    </body>
+</html>
