@@ -18,7 +18,7 @@
                     var body = {"URI":document.getElementById('IdURI').value,
                                 "Commentaire":document.getElementById('IdCommentaire').value};    
                     console.log(body);
-                    var route = "/Annotation";
+                    var route = "https://dataannotation.onrender.com/Annotation";
                     
                     fetch(route, {  method: "POST",
                                     body: JSON.stringify(body)
@@ -52,7 +52,7 @@
 					FormatIdAnnot='text/'+FormatIdAnnot;
 				}
 
-				var route = "/IdAnnot/"+Annot;
+				var route = "https://dataannotation.onrender.com/IdAnnot/"+Annot;
 				fetch(route, {method:'GET',
 							  headers : {'accept' : FormatIdAnnot}
 							  })
@@ -101,7 +101,7 @@
 		</form>
 
           <h1>Acceder à toutes les annotations</h1>
-          <form action="/allAnnotations" method="get">
+          <form action="https://dataannotation.onrender.com/allAnnotations" method="get">
               <label for="format">Format de données :</label>
               <select id="format" name="format">
                 <option value="html">HTML</option>
@@ -112,7 +112,7 @@
             </form>
 
             <h1>Acceder à toutes les annotations d'une URL particulière</h1>
-            <form action="/uri" method="GET">
+            <form action="https://dataannotation.onrender.com/uri" method="GET">
                 <label for="url">URI :</label>
                 <input type="text" id="url" name="url" required>
                 <br>
