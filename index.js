@@ -19,10 +19,8 @@ app.get('/',(req,res)=>{
  }) 
 
 app.post("/Annotation", function(req,res){
-    //res.sendfile("D:/Applis/Git/DonneesConnectees/Module.html");
     var body = req.body;
     console.log("body :"+JSON.stringify(body));
-    //data.push(body);
     annotations[id]=body;
     console.log("liste annotations :"+JSON.stringify(annotations));
     id++;
@@ -30,47 +28,62 @@ app.post("/Annotation", function(req,res){
     }
 );
 
-// Route pour récupérer une annotation
-app.get('/annotations', function(req, res) {
-    // Récupération de l'ID et du format de données depuis les paramètres de la requête
-    var id = req.query.id;
-    var format = req.query.format;
-  
-    // Récupération de l'annotation correspondant à l'ID dans la liste des annotations
-    var annotation = annotations[id];
-    console.log("annotation"+annotation)
-    // Si l'annotation n'existe pas, on renvoie une erreur 404
-    if (!annotation) {
-      res.status(404).send('Annotation non trouvée');
-      return;
-    }
-  
-    // Si le format demandé est "HTML", on renvoie une réponse HTML
-    if (format === 'html') {
-      var html = '<h1>' + annotation.URI + '</h1>' +
-                 '<p>' + annotation.Commentaire + '</p>';
-      res.send(html);
-    }
-    // Si le format demandé est "JSON", on renvoie une réponse JSON
-    else if (format === 'json') {
+// Route pour récupérer une annotation par son identifiant
+app.get('/IdAnnot/:Annot', (req, res) => {
+  var IdAnnot = req.params.Annot;
+  var annotation = annotations[IdAnnot];
+  if (annotation) {
+    // Si l'annotation existe, on la retourne au format JSON ou HTML en fonction de la négociation de contenu
+    const acceptHeader = req.headers.accept;
+    console.log(acceptHeader);
+    if (acceptHeader == 'application/json') {
+      res.setHeader('Content-type','application/json');
       res.send(annotation);
+    } else {
+      res.setHeader('Content-type','text/html');
+      res.send(`<h1>${annotation.URI}</h1><p>${annotation.Commentaire}</p>`);
     }
-    // Sinon, on renvoie une erreur 400 car le format demandé n'est pas supporté
-    else {
-      res.status(400).send('Format de données non supporté');
-    }
-  });
-  
-  // Route pour récupérer toutes les annotations
+  } else {
+    // Si l'annotation n'existe pas, on retourne une erreur 404
+    res.status(404).send('Annotation not found');
+  }
+}); 
+
+
+// Route pour récupérer toutes les annotations
 app.get('/allAnnotations', function(req, res) {
-    // Récupération du format de données depuis les paramètres de la requête
+  // Récupération du format de données depuis les paramètres de la requête
+  var format = req.query.format;
+
+  var annotation = annotations;
+  // Si le format demandé est "HTML", on renvoie une réponse HTML
+  if (format === 'html') {
+      var html = '<ul>';
+      var annotationList = Object.values(annotations);
+      annotationList.forEach(function(annotation) {
+        html += '<li>' + annotation.URI + ': ' + annotation.Commentaire + '</li>';
+      });
+      html += '</ul>';
+      res.send(html);
+  }
+  // Si le format demandé est "JSON", on renvoie une réponse JSON
+  else if (format === 'json') {
+    res.send(annotation);
+  }
+  // Sinon, on renvoie une erreur 400 car le format demandé n'est pas supporté
+  else {
+    res.status(400).send('Format de données non supporté');
+  }
+});
+ 
+// Route pour récupérer toutes les annotations d'une URI
+app.get('/uri', function(req, res) {
     var format = req.query.format;
-  
-    var annotation = annotations;
+    var url = req.query.url;
+    var annotationList = Object.values(annotations).filter(annotation => annotation.URI === url);
     // Si le format demandé est "HTML", on renvoie une réponse HTML
-    if (format === 'html') {
+    if (format == 'html') {
         var html = '<ul>';
-        var annotationList = Object.values(annotations);
         annotationList.forEach(function(annotation) {
           html += '<li>' + annotation.URI + ': ' + annotation.Commentaire + '</li>';
         });
@@ -78,8 +91,8 @@ app.get('/allAnnotations', function(req, res) {
         res.send(html);
     }
     // Si le format demandé est "JSON", on renvoie une réponse JSON
-    else if (format === 'json') {
-      res.send(annotation);
+    else if (format == 'json') {
+      res.send(annotationList);
     }
     // Sinon, on renvoie une erreur 400 car le format demandé n'est pas supporté
     else {
@@ -87,34 +100,6 @@ app.get('/allAnnotations', function(req, res) {
     }
   });
   
-  app.get('/uriannotations', function(req, res) {
-    var url = req.query.url;
-    var format = req.accepts(['html', 'json']);
-    if (!format) {
-      res.status(406).send('Not Acceptable');
-    } else if (format === 'html') {
-      var html = '<ul>';
-      var annotationList = Object.values(annotations).filter(function(annotation) {
-        return annotation.URI === url;
-      });
-      annotationList.forEach(function(annotation) {
-        html += '<li>' + annotation.URI + ': ' + annotation.Commentaire + '</li>';
-      });
-      html += '</ul>';
-      res.send(html);
-    } else if (format === 'json') {
-      var annotationList = Object.values(annotations).filter(function(annotation) {
-        return annotation.URI === url;
-      });
-      res.json(annotationList);
-    }
-  });
-  
-
-app.get("/toto", function(req,res){
-    res.send("salut toto");
-    }
-);
 
 app.listen(port, function(){
     console.log('serveur listening on port : '+port);

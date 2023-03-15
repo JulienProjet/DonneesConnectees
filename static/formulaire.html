@@ -14,7 +14,6 @@
 
 
             function envoi(){
-                //alert("URI est : " +document.getElementById('IdURI').value);
                 if (isURL(document.getElementById('IdURI').value)){
                     var body = {"URI":document.getElementById('IdURI').value,
                                 "Commentaire":document.getElementById('IdCommentaire').value};    
@@ -28,12 +27,10 @@
                                 }).then(
 
                     function(res){
-                                    //echo "Annotation crée";
                                     console.log(res);
                                     document.getElementById('IdURI').value="";
 							        document.getElementById('IdCommentaire').value="";
                                     document.getElementById('IdRes').innerHTML="Annotation ajoutée!";
-                                    //window.location.reload();
                                     });
 
                 }   
@@ -41,7 +38,32 @@
                         document.getElementById('IdURI').value="";
                         document.getElementById('IdRes').innerHTML="Veuillez rentrer une URI valide!";
                     }
-        };
+            };
+
+            function envoiAnnot(){
+			
+				var Annot = document.getElementById('IdAnnot').value;
+				var FormatIdAnnot = document.getElementById('FormatIdAnnot').value;
+
+				if (FormatIdAnnot=='json'){
+					FormatIdAnnot='application/'+FormatIdAnnot;
+				}
+				else {
+					FormatIdAnnot='text/'+FormatIdAnnot;
+				}
+
+				var route = "/IdAnnot/"+Annot;
+				fetch(route, {method:'GET',
+							  headers : {'accept' : FormatIdAnnot}
+							  })
+
+                              /* .then(function(value) {                            // si on veut rediriger directement vers l'annotations
+                                window.location = 'http://localhost:3000'+route;
+                                console.log(value); 
+                                }); */
+    
+			
+			};
 
         </script>
     </head>
@@ -54,36 +76,29 @@
             <label for="content">Commentaire :</label>
             <textarea id="IdCommentaire" name="content"></textarea><br><br>
             
-            <!-- <label for="format">Format :</label>
-            <select id="format" name="format">
-                <option value="text">Texte brut</option>
-                <option value="html">HTML</option>
-                <option value="markdown">Markdown</option>
-                <option value="json">JSON</option>
-            </select><br><br> -->
-            
             <input type="submit" value="Envoyer" onclick="envoi()">
-            <!-- <button onclick="envoi()" type="button">Envoyer</button> -->
-
             
         </form>
         
         <p id="IdRes"></p>
 
-
         <h1>Acceder à une annotation</h1>
-		<form action="/annotations" method="get">
-            <label for="id">ID de l'annotation :</label>
-            <input type="number" id="id" name="id" required>
-            <br>
-            <label for="format">Format de données :</label>
-            <select id="format" name="format">
-              <option value="html">HTML</option>
-              <option value="json">JSON</option>
-            </select>
-            <br>
-            <button type="submit">Récupérer</button>
-          </form>
+		<form autocomplete="off">
+			<p>
+				<label for="Annot">Annot :</label>
+				<input type="text" name="Annot" id="IdAnnot" placeholder="" size="30" maxlength="20">
+			</p>
+			<p>
+				<label for="FormatIdAnnot">Choisissez le format de réponse</label><br>
+				<select name="FormatIdAnnot" id="FormatIdAnnot">
+					<option value="html">html</option>
+					<option value="json">Json</option>
+				</select>
+			</p>
+			<p> 
+				<button onclick="envoiAnnot()" type="button">Envoyer</button> 
+			</p>
+		</form>
 
           <h1>Acceder à toutes les annotations</h1>
           <form action="/allAnnotations" method="get">
@@ -96,9 +111,9 @@
               <button type="submit">Récupérer</button>
             </form>
 
-            <h1>Acceder à toutes les annotations d'une URI particulière</h1>
-            <form action="/uriannotations" method="get">
-                <label for="url">URL :</label>
+            <h1>Acceder à toutes les annotations d'une URL particulière</h1>
+            <form action="/uri" method="GET">
+                <label for="url">URI :</label>
                 <input type="text" id="url" name="url" required>
                 <br>
                 <label for="format">Format :</label>
@@ -107,7 +122,8 @@
                   <option value="json">JSON</option>
                 </select>
                 <br>
-                <button type="submit">Récupérer les annotations</button>
+                <input type="submit" value="Récupérer les annotations">
+
               </form>
     </body>
 </html>
