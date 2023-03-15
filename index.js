@@ -14,11 +14,19 @@ app.use(bodyParser.json());
 
 app.use(express.static("static"));
 
+var cors = require('cors');
+app.use((req, res, next)=>{
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Methods', 'POST');
+	res.header('Access-Control-Allow-Headers', 'Content-Type');
+	next();
+});
+
 app.get('/',(req,res)=>{
     res.redirect('/formulaire.html');
  }) 
 
-app.post("/Annotation", function(req,res){
+app.post("/Annotation", cors(), function(req,res){
     var body = req.body;
     console.log("body :"+JSON.stringify(body));
     annotations[id]=body;

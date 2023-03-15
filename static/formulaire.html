@@ -21,8 +21,9 @@
                     var route = "https://dataannotation.onrender.com/Annotation";
                     
                     fetch(route, {  method: "POST",
-                                    body: JSON.stringify(body)
-                                    ,headers:{'Content-Type': 'application/json'}
+                                    body: JSON.stringify(body),
+                                    headers:{'Content-Type': 'application/json',
+                                    mode : "cors"}
                     
                                 }).then(
 
