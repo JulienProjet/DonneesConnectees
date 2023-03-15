@@ -12,7 +12,7 @@ var app = express();
 
 app.use(express.static("static"));
 
-
+/*
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*'); //https://julienprojet.github.io
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
@@ -20,10 +20,10 @@ app.use((req, res, next) => {
 
     next();
 });
-/*
+*/
 app.use(cors())
 app.options('*', cors())
-*/
+
 app.use(bodyParser.json());
 
 app.get('/',(req,res)=>{
